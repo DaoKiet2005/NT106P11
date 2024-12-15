@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tìm kiếm thông tin sức khỏe</title>
+    <script
+      src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"
+      type="module"
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"
+      type="module"
+    ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #result {
+        margin-top: 30px;
+      }
+
+      ul {
+        list-style-type: none;
+        padding-left: 0;
+      }
+
+      li {
+        background-color: #f2f2f2;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      li strong {
+        color: #333;
+      }
+
+      hr {
+        border: 0;
+        height: 1px;
+        background-color: #ddd;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Tìm kiếm thông tin sức khỏe</h1>
+      <input type="text" id="nameInput" placeholder="Nhập tên..." />
+      <button onclick="searchByName()">Tìm kiếm</button>
+      <div id="result"></div>
+    </div>
+
+    <script type="module">
+      // Firebase configuration
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        query,
+        orderByChild,
+        equalTo,
+        get,
+      } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4cAerPVghUUGzz_SEY6x87RKAQj3hhtA",
+        authDomain: "nt101-ae2a9.firebaseapp.com",
+        databaseURL:
+          "https://nt101-ae2a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "nt101-ae2a9",
+        storageBucket: "nt101-ae2a9.firebasestorage.app",
+        messagingSenderId: "970129026346",
+        appId: "1:970129026346:web:ae55e8a30e8903d97c8253",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Function to search health info by name
+      window.searchByName = async function () {
+        const name = document.getElementById("nameInput").value;
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "Đang tìm kiếm...";
+
+        const healthInfoRef = ref(database, "health_info");
+        const queryByName = query(
+          healthInfoRef,
+          orderByChild("name"),
+          equalTo(name)
+        );
+
+        try {
+          const snapshot = await get(queryByName);
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            let resultHtml = "<ul>"; // Tạo danh sách không sắp xếp
+            for (const userId in data) {
+              resultHtml += `
+                <li><strong>Tên: </strong> ${data[userId].name}</li>
+                <li><strong>Địa chỉ: </strong> ${data[userId].address}</li>
+                <li><strong>Ngày nhập viện: </strong> ${
+                  data[userId].admissionDate
+                }</li>
+                <li><strong>Ngày ra viện: </strong> ${
+                  data[userId].dischargeDate || "Chưa có thông tin"
+                }</li>
+                <li><strong>Tuổi: </strong> ${data[userId].age}</li>
+                <li><strong>Huyết áp: </strong> ${
+                  data[userId].bloodPressure
+                }</li>
+                <li><strong>Nhịp tim: </strong> ${data[userId].heartRate}</li>
+                <li><strong>Chiều cao: </strong> ${data[userId].height}</li>
+                <li><strong>Tiền sử bệnh: </strong> ${
+                  data[userId].medicalHistory
+                }</li>
+                <li><strong>Số điện thoại: </strong> ${
+                  data[userId].phoneNumber
+                }</li>
+                <li><strong>Cân nặng: </strong> ${data[userId].weight}</li>
+                <hr />  <!-- Tạo một đường phân cách giữa các kết quả -->
+              `;
+            }
+            resultHtml += "</ul>";
+            resultDiv.innerHTML = resultHtml;
+          } else {
+            resultDiv.innerHTML = "Không tìm thấy kết quả.";
+          }
+        } catch (error) {
+          resultDiv.innerHTML = "Lỗi: " + error.message;
+        }
+      };
+    </script>
+  </body>
+</html>

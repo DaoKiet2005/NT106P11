@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thông Tin Sức Khỏe</title>
+    <link rel="stylesheet" href="info.css" />
+    <style>
+      .error {
+        border: 2px solid red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>Nhập Thông Tin Sức Khỏe</h1>
+      <form id="healthForm">
+        <label for="name">Họ và tên:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="age">Tuổi:</label>
+        <input type="number" id="age" name="age" required />
+
+        <label for="address">Địa chỉ:</label>
+        <input type="text" id="address" name="address" required />
+
+        <label for="phoneNumber">Số điện thoại:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required />
+
+        <label for="admissionDate">Ngày nhập viện:</label>
+        <input type="date" id="admissionDate" name="admissionDate" required />
+
+        <label for="dischargeDate">Ngày ra viện:</label>
+        <input type="date" id="dischargeDate" name="dischargeDate" />
+
+        <label for="medicalHistory">Tiền sử bệnh án:</label>
+        <textarea id="medicalHistory" name="medicalHistory" required></textarea>
+
+        <label for="height">Chiều cao (cm):</label>
+        <input type="number" id="height" name="height" required />
+
+        <label for="weight">Cân nặng (kg):</label>
+        <input type="number" id="weight" name="weight" required />
+
+        <label for="bloodPressure">Huyết áp:</label>
+        <input type="text" id="bloodPressure" name="bloodPressure" required />
+
+        <label for="heartRate">Nhịp tim:</label>
+        <input type="number" id="heartRate" name="heartRate" required />
+
+        <button type="submit">Lưu thông tin</button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+      } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+      // Cấu hình Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4cAerPVghUUGzz_SEY6x87RKAQj3hhtA",
+        authDomain: "nt101-ae2a9.firebaseapp.com",
+        databaseURL:
+          "https://nt101-ae2a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "nt101-ae2a9",
+        storageBucket: "nt101-ae2a9.appspot.com",
+        messagingSenderId: "970129026346",
+        appId: "1:970129026346:web:ae55e8a30e8903d97c8253",
+      };
+
+      // Khởi tạo Firebase
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Hàm định dạng ngày từ yyyy-mm-dd sang dd/mm/yyyy
+      function formatDateToDDMMYYYY(dateString) {
+        const [year, month, day] = dateString.split("-");
+        return `${day}/${month}/${year}`;
+      }
+
+      // Hàm kiểm tra dữ liệu đầu vào
+      function validateInput(input, condition) {
+        if (condition) {
+          input.classList.remove("error"); // Xóa lỗi nếu hợp lệ
+          return true;
+        } else {
+          input.classList.add("error"); // Thêm lỗi nếu không hợp lệ
+          return false;
+        }
+      }
+
+      // Xử lý khi form được submit
+      document
+        .getElementById("healthForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Ngăn hành vi mặc định
+
+          // Lấy các giá trị từ form
+          const name = document.getElementById("name");
+          const age = document.getElementById("age");
+          const height = document.getElementById("height");
+          const weight = document.getElementById("weight");
+          const bloodPressure = document.getElementById("bloodPressure");
+          const medicalHistory = document.getElementById("medicalHistory");
+          const admissionDate = document.getElementById("admissionDate");
+          const dischargeDate = document.getElementById("dischargeDate");
+          const address = document.getElementById("address");
+          const phoneNumber = document.getElementById("phoneNumber");
+          const heartRate = document.getElementById("heartRate");
+
+          // Kiểm tra dữ liệu đầu vào và lưu vào Firebase
+          const formattedAdmissionDate = formatDateToDDMMYYYY(
+            admissionDate.value
+          );
+          const formattedDischargeDate = dischargeDate.value
+            ? formatDateToDDMMYYYY(dischargeDate.value)
+            : null; // Nếu không có ngày ra viện, để giá trị là null
+
+          const healthInfoRef = ref(
+            database,
+            "health_info/" + phoneNumber.value.trim()
+          );
+
+          // Sử dụng `set()` để lưu dữ liệu
+          set(healthInfoRef, {
+            name: name.value.trim(),
+            age: parseInt(age.value),
+            height: parseFloat(height.value),
+            weight: parseFloat(weight.value),
+            bloodPressure: bloodPressure.value.trim(),
+            medicalHistory: medicalHistory.value.trim(),
+            admissionDate: formattedAdmissionDate,
+            dischargeDate: formattedDischargeDate, // Lưu ngày ra viện
+            address: address.value.trim(),
+            phoneNumber: phoneNumber.value.trim(),
+            heartRate: parseInt(heartRate.value),
+          })
+            .then(() => {
+              alert("Thông tin đã được lưu thành công!");
+              document.getElementById("healthForm").reset(); // Reset form
+            })
+            .catch((error) => {
+              alert("Có lỗi xảy ra: " + error.message);
+            });
+        });
+    </script>
+  </body>
+</html>
