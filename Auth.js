@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
           password: password,
           cpassword: cpassword,
         });
-        window.location.href = "info.html";
+        window.location.href = "Menu1.html";
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -81,7 +81,6 @@ if (signInButton) {
   });
 }
 
-// Hàm này tạo ra để theo dõi trạng thái đăng nhập của người dùng
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // Người dùng đã đăng nhập
@@ -98,13 +97,20 @@ onAuthStateChanged(auth, (user) => {
       lastLogin: loginTimestamp,
     });
 
+    localStorage.setItem("loggedInUserId", uid); // Lưu thông tin người dùng vào localStorage
     console.log(`User logged in: ${uid}`);
   } else {
     // Người dùng đã đăng xuất
     const loggedInUserId = localStorage.getItem("loggedInUserId");
     if (loggedInUserId) {
+      // Lấy thời gian đăng xuất
+      const logoutTimestamp = new Date().toLocaleString("vi-VN", {
+        timeZone: "Asia/Ho_Chi_Minh",
+      });
+
       update(ref(database, "users/" + loggedInUserId), {
         isLoggedIn: false,
+        lastLogout: logoutTimestamp,
       }).then(() => {
         localStorage.removeItem("loggedInUserId"); // Xóa thông tin người dùng khỏi localStorage
         console.log("User logged out and status updated in database.");

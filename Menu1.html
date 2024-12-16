@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trang Web Đơn Giản</title>
+    <title>Chức năng</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -37,13 +37,64 @@
       .button:hover {
         background-color: #45a049;
       }
+      .logout-button {
+        background-color: #f44336; /* Màu đỏ cho nút đăng xuất */
+      }
+      .logout-button:hover {
+        background-color: #e53935;
+      }
     </style>
+
+    <!-- Firebase App (required) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+    <!-- Firebase Authentication (required for auth) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   </head>
   <body>
     <div class="container">
       <h1>Chào mừng bạn!</h1>
-      <a href="Info.html" class="button">Nhập thông tin</a>
-      <a href="ListInfo.html" class="button">Xem thông tin</a>
+      <button class="button" onclick="window.location.href='Info.html'">
+        Nhập thông tin
+      </button>
+      <button class="button" onclick="window.location.href='ListInfo.html'">
+        Xem thông tin
+      </button>
+      <button class="button logout-button" onclick="logout()">Đăng xuất</button>
     </div>
+
+    <script>
+      // Cấu hình Firebase của bạn
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4cAerPVghUUGzz_SEY6x87RKAQj3hhtA",
+        authDomain: "nt101-ae2a9.firebaseapp.com",
+        databaseURL:
+          "https://nt101-ae2a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "nt101-ae2a9",
+        storageBucket: "nt101-ae2a9.firebasestorage.app",
+        messagingSenderId: "970129026346",
+        appId: "1:970129026346:web:ae55e8a30e8903d97c8253",
+      };
+
+      // Khởi tạo Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Hàm đăng xuất
+      function logout() {
+        auth
+          .signOut()
+          .then(() => {
+            // Đăng xuất thành công
+            alert("Bạn đã đăng xuất.");
+            window.location.href = "Login.html"; // Chuyển hướng đến trang đăng nhập
+          })
+          .catch((error) => {
+            // Xử lý lỗi
+            console.error("Lỗi đăng xuất: ", error);
+            alert("Có lỗi xảy ra khi đăng xuất.");
+          });
+      }
+    </script>
   </body>
 </html>
