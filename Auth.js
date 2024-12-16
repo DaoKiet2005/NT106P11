@@ -28,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth(app);
 
-//tính năng đăng kí
+// Tính năng đăng ký
 document.addEventListener("DOMContentLoaded", function () {
   const signUpButton = document.getElementById("signUp");
 
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        //Đã đăng kí
+        // Đã đăng ký
         const user = userCredential.user;
         set(ref(database, "users/" + user.uid), {
           email: email,
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-//tính năng đăng nhập
+// Tính năng đăng nhập
 const signInButton = document.getElementById("signIn");
 if (signInButton) {
   signInButton.addEventListener("click", (event) => {
@@ -68,14 +68,11 @@ if (signInButton) {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        //đã đăng nhập
+        // Đã đăng nhập
         const user = userCredential.user;
         localStorage.setItem("loggedInUserId", user.uid);
         window.location.href = "info.html";
-        const dt = new Date();
-        update(ref(database, "users/" + user.uid), {
-          last_login: dt,
-        });
+        update(ref(database, "users/" + user.uid), {});
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -84,12 +81,34 @@ if (signInButton) {
   });
 }
 
-//Hàm này tạo ra để theo dõi trạng thái đăng nhập của người dùng
-const user = auth.currentUser;
+// Hàm này tạo ra để theo dõi trạng thái đăng nhập của người dùng
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    // Người dùng đã đăng nhập
     const uid = user.uid;
+
+    // Lấy thời gian đăng nhập và chuyển sang giờ Việt Nam
+    const loginTimestamp = new Date().toLocaleString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+    });
+
+    // Lưu trạng thái đăng nhập vào Realtime Database
+    update(ref(database, "users/" + uid), {
+      isLoggedIn: true,
+      lastLogin: loginTimestamp,
+    });
+
+    console.log(`User logged in: ${uid}`);
   } else {
-    //người dùng đã đăng xuất
+    // Người dùng đã đăng xuất
+    const loggedInUserId = localStorage.getItem("loggedInUserId");
+    if (loggedInUserId) {
+      update(ref(database, "users/" + loggedInUserId), {
+        isLoggedIn: false,
+      }).then(() => {
+        localStorage.removeItem("loggedInUserId"); // Xóa thông tin người dùng khỏi localStorage
+        console.log("User logged out and status updated in database.");
+      });
+    }
   }
 });
