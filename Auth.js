@@ -71,7 +71,7 @@ if (signInButton) {
         // Đã đăng nhập
         const user = userCredential.user;
         localStorage.setItem("loggedInUserId", user.uid);
-        window.location.href = "info.html";
+        window.location.href = "Menu1.html";
         update(ref(database, "users/" + user.uid), {});
       })
       .catch((error) => {

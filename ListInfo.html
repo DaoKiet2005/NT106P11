@@ -95,6 +95,7 @@
       <h1>Tìm kiếm thông tin sức khỏe</h1>
       <input type="text" id="nameInput" placeholder="Nhập tên..." />
       <button onclick="searchByName()">Tìm kiếm</button>
+      <button onclick="goBack()">Trở về</button>
       <div id="result"></div>
     </div>
 
@@ -159,7 +160,7 @@
                 }</li>
                 <li><strong>Nhịp tim: </strong> ${data[userId].heartRate}</li>
                 <li><strong>Chiều cao: </strong> ${data[userId].height}</li>
-                <li><strong>Tiền sử bệnh: </strong> ${
+                <li><strong>Chuẩn đoán: </strong> ${
                   data[userId].medicalHistory
                 }</li>
                 <li><strong>Số điện thoại: </strong> ${
@@ -177,6 +178,9 @@
         } catch (error) {
           resultDiv.innerHTML = "Lỗi: " + error.message;
         }
+      };
+      window.goBack = function () {
+        window.location.href = "Menu1.html";
       };
     </script>
   </body>
