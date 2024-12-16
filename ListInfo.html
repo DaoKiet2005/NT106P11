@@ -20,41 +20,71 @@
         padding: 0;
       }
 
+      /* Định dạng header */
+      header {
+        width: 100%;
+        padding: 10px 0; /* Đã tăng padding để header có thêm không gian */
+        background-color: #4caf50; /* Màu nền */
+        color: white; /* Màu chữ */
+        text-align: center; /* Căn giữa nội dung */
+        font-size: 10px; /* Kích thước chữ lớn hơn */
+        font-weight: bold; /* Đậm chữ */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+      }
+
+      header h1 {
+        margin: 0;
+      }
+
       h1 {
         text-align: center;
-        margin-top: 50px;
+        font-size: 25px;
+        margin-top: 30px;
         color: #333;
       }
 
       .container {
-        max-width: 500px;
-        margin: 0 auto;
-        background-color: white;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-      }
+      max-width: 400px;
+      margin: 20px auto; /* Căn giữa container theo chiều ngang */
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column; /* Sắp xếp các phần tử con theo cột */
+      align-items: center; /* Căn giữa các phần tử con theo chiều ngang */
+    }
 
-      input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-      }
+    input[type="text"] {
+      width: 100%; /* Giảm chiều rộng để tránh chiếm toàn bộ */
+      padding: 10px;
+      margin: 10px 0; 
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      display: block; 
+    }
 
-      button {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        width: 100%;
-        margin: 10px 0;
-      }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between; /* Căn đều hai nút */
+      width: 100%; /* Đảm bảo các nút nằm trên cùng một hàng */
+      margin-top: 10px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;  
+      flex: 1; /* Giãn đều kích thước nút */
+      margin: 0 5px; /* Tạo khoảng cách nhỏ giữa các nút */
+      padding: 10px;
+    }
 
       button:hover {
         background-color: #45a049;
@@ -91,13 +121,21 @@
     </style>
   </head>
   <body>
+    <header>
+      <h1>Chào mừng bạn đến với hệ thống!</h1>
+    </header>
     <div class="container">
       <h1>Tìm kiếm thông tin sức khỏe</h1>
       <input type="text" id="nameInput" placeholder="Nhập tên..." />
-      <button onclick="searchByName()">Tìm kiếm</button>
-      <button onclick="goBack()">Trở về</button>
+      <div class="button-container">
+        <button onclick="searchByName()">Tìm kiếm</button>
+        <button onclick="goBack()">Trở về</button>
+      </div>
       <div id="result"></div>
     </div>
+  </body>
+</html>
+
 
     <script type="module">
       // Firebase configuration

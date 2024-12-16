@@ -12,6 +12,9 @@
     </style>
   </head>
   <body>
+    <header>
+      <h1>Chào mừng bạn đến với hệ thống!</h1>
+    </header>
     <div class="form-container">
       <h1>Nhập Thông Tin Sức Khỏe</h1>
       <form id="healthForm">
@@ -48,9 +51,18 @@
         <label for="heartRate">Nhịp tim:</label>
         <input type="number" id="heartRate" name="heartRate" required />
 
-        <button type="submit">Lưu thông tin</button>
+        <div class="button-container">
+          <button type="submit">Lưu thông tin</button>
+          <button type="button" onclick="goBack()">Trở về</button>
+        </div>
       </form>
     </div>
+
+    <script>
+      function goBack() {
+        window.location.href = "Menu1.html"; // Quay lại trang Menu1.html
+      }
+    </script>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";

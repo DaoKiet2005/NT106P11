@@ -5,22 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chức năng</title>
     <style>
+      /* Định dạng body */
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
         height: 100vh;
         background-color: #f3f4f6;
       }
+
+      /* Định dạng header */
+      header {
+        width: 100%;
+        padding: 10px 0;
+        background-color: #4caf50; /* Màu nền */
+        color: white; /* Màu chữ */
+        text-align: center; /* Căn giữa nội dung */
+        font-size: 10px; /* Kích thước chữ */
+        font-weight: bold; /* Đậm chữ */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+      }
+
+      header h1 {
+        margin: 0;
+      }
+
+      /* Định dạng container */
       .container {
         text-align: center;
+        margin-top: 50px;
       }
-      h1 {
+
+      /* Định dạng tiêu đề chính trong container */
+      .container h1 {
         color: #333;
       }
+
+      /* Định dạng nút bấm */
       .button {
         display: inline-block;
         margin: 10px;
@@ -34,14 +58,19 @@
         text-decoration: none;
         transition: background-color 0.3s ease;
       }
+
+      /* Hiệu ứng hover cho nút */
       .button:hover {
         background-color: #45a049;
       }
+
+      /* Định dạng nút đăng xuất */
       .logout-button {
         background-color: #f44336; /* Màu đỏ cho nút đăng xuất */
       }
+
       .logout-button:hover {
-        background-color: #e53935;
+        background-color: #e53935; /* Màu đỏ đậm hơn khi hover */
       }
     </style>
 
@@ -52,8 +81,14 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   </head>
   <body>
+    <!-- Phần header -->
+    <header>
+      <h1>Chào mừng bạn đến với hệ thống!</h1>
+    </header>
+
+    <!-- Nội dung chính -->
     <div class="container">
-      <h1>Chào mừng bạn!</h1>
+      <h1>Chức năng</h1>
       <button class="button" onclick="window.location.href='Info.html'">
         Nhập thông tin
       </button>
