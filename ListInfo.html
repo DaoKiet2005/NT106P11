@@ -20,20 +20,15 @@
         padding: 0;
       }
 
-      /* Định dạng header */
       header {
         width: 100%;
-        padding: 10px 0; /* Đã tăng padding để header có thêm không gian */
-        background-color: #4caf50; /* Màu nền */
-        color: white; /* Màu chữ */
-        text-align: center; /* Căn giữa nội dung */
-        font-size: 10px; /* Kích thước chữ lớn hơn */
-        font-weight: bold; /* Đậm chữ */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
-      }
-
-      header h1 {
-        margin: 0;
+        padding: 10px 0;
+        background-color: #4caf50;
+        color: white;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
@@ -44,53 +39,54 @@
       }
 
       .container {
-      max-width: 400px;
-      margin: 20px auto; /* Căn giữa container theo chiều ngang */
-      background-color: white;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column; /* Sắp xếp các phần tử con theo cột */
-      align-items: center; /* Căn giữa các phần tử con theo chiều ngang */
-    }
+        max-width: 400px;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    input[type="text"] {
-      width: 100%; /* Giảm chiều rộng để tránh chiếm toàn bộ */
-      padding: 10px;
-      margin: 10px 0; 
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-      display: block; 
-    }
+      input[type="text"],
+      input[type="number"],
+      input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        display: block;
+      }
 
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 10px;
+      }
 
-    .button-container {
-      display: flex;
-      justify-content: space-between; /* Căn đều hai nút */
-      width: 100%; /* Đảm bảo các nút nằm trên cùng một hàng */
-      margin-top: 10px;
-    }
-
-    button {
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;  
-      flex: 1; /* Giãn đều kích thước nút */
-      margin: 0 5px; /* Tạo khoảng cách nhỏ giữa các nút */
-      padding: 10px;
-    }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        flex: 1;
+        margin: 0 5px;
+        padding: 10px;
+      }
 
       button:hover {
         background-color: #45a049;
       }
 
       #result {
+        width: 100%;
         margin-top: 30px;
       }
 
@@ -133,9 +129,6 @@
       </div>
       <div id="result"></div>
     </div>
-  </body>
-</html>
-
 
     <script type="module">
       // Firebase configuration
@@ -147,6 +140,7 @@
         orderByChild,
         equalTo,
         get,
+        update,
       } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
       const firebaseConfig = {
@@ -184,13 +178,18 @@
             let resultHtml = "<ul>"; // Tạo danh sách không sắp xếp
             for (const userId in data) {
               resultHtml += `
-                <li><strong>Tên: </strong> ${data[userId].name}</li>
+                <li>
+                  <strong>Tên: </strong> ${data[userId].name}
+                  <button onclick="Edit('${userId}')">Chỉnh sửa</button> <!-- Thêm nút chỉnh sửa -->
+                </li>
                 <li><strong>Địa chỉ: </strong> ${data[userId].address}</li>
-                <li><strong>Ngày nhập viện: </strong> ${
+                <li><strong>Ngày nhập viện: </strong> ${formatDate(
                   data[userId].admissionDate
-                }</li>
+                )}</li>
                 <li><strong>Ngày ra viện: </strong> ${
-                  data[userId].dischargeDate || "Chưa có thông tin"
+                  data[userId].dischargeDate
+                    ? formatDate(data[userId].dischargeDate)
+                    : "Chưa có thông tin"
                 }</li>
                 <li><strong>Tuổi: </strong> ${data[userId].age}</li>
                 <li><strong>Huyết áp: </strong> ${
@@ -205,7 +204,7 @@
                   data[userId].phoneNumber
                 }</li>
                 <li><strong>Cân nặng: </strong> ${data[userId].weight}</li>
-                <hr />  <!-- Tạo một đường phân cách giữa các kết quả -->
+                <hr />
               `;
             }
             resultHtml += "</ul>";
@@ -217,8 +216,92 @@
           resultDiv.innerHTML = "Lỗi: " + error.message;
         }
       };
+
       window.goBack = function () {
         window.location.href = "Menu1.html";
+      };
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, "0"); // Ensure day is 2 digits
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed, add 1
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+
+      // Edit function to show and update the form for editing health info
+      window.Edit = async function (userId) {
+        const healthInfoRef = ref(database, "health_info/" + userId);
+        const snapshot = await get(healthInfoRef);
+        const data = snapshot.val();
+
+        if (data) {
+          const editHtml = `
+            <h2>Chỉnh sửa thông tin</h2>
+            <input type="text" id="editName" value="${
+              data.name
+            }" placeholder="Tên" />
+            <input type="text" id="editAddress" value="${
+              data.address
+            }" placeholder="Địa chỉ" />
+            <input type="date" id="editAdmissionDate" value="${
+              data.admissionDate
+            }" placeholder="Ngày nhập viện" />
+            <input type="date" id="editDischargeDate" value="${
+              data.dischargeDate || ""
+            }" placeholder="Ngày ra viện" />
+            <input type="number" id="editAge" value="${
+              data.age
+            }" placeholder="Tuổi" />
+            <input type="text" id="editBloodPressure" value="${
+              data.bloodPressure
+            }" placeholder="Huyết áp" />
+            <input type="text" id="editHeartRate" value="${
+              data.heartRate
+            }" placeholder="Nhịp tim" />
+            <input type="text" id="editHeight" value="${
+              data.height
+            }" placeholder="Chiều cao" />
+            <input type="text" id="editMedicalHistory" value="${
+              data.medicalHistory
+            }" placeholder="Chuẩn đoán" />
+            <input type="text" id="editPhoneNumber" value="${
+              data.phoneNumber
+            }" placeholder="Số điện thoại" />
+            <input type="number" id="editWeight" value="${
+              data.weight
+            }" placeholder="Cân nặng" />
+            <button onclick="saveChanges('${userId}')">Lưu thay đổi</button>
+            <button onclick="cancelEdit()">Hủy</button>
+          `;
+          document.getElementById("result").innerHTML = editHtml;
+        }
+      };
+
+      // Save updated data to Firebase
+      window.saveChanges = async function (userId) {
+        const updatedData = {
+          name: document.getElementById("editName").value,
+          address: document.getElementById("editAddress").value,
+          admissionDate: document.getElementById("editAdmissionDate").value,
+          dischargeDate: document.getElementById("editDischargeDate").value,
+          age: document.getElementById("editAge").value,
+          bloodPressure: document.getElementById("editBloodPressure").value,
+          heartRate: document.getElementById("editHeartRate").value,
+          height: document.getElementById("editHeight").value,
+          medicalHistory: document.getElementById("editMedicalHistory").value,
+          phoneNumber: document.getElementById("editPhoneNumber").value,
+          weight: document.getElementById("editWeight").value,
+        };
+
+        const healthInfoRef = ref(database, "health_info/" + userId);
+        await update(healthInfoRef, updatedData);
+        alert("Thông tin đã được cập nhật!");
+        window.location.reload(); // Reload the page to show updated data
+      };
+
+      window.cancelEdit = function () {
+        window.location.reload(); // Reload to cancel edit
       };
     </script>
   </body>
